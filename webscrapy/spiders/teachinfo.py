@@ -1,13 +1,11 @@
 import scrapy
 import scrapy.cmdline
-import re
-from fake_useragent import UserAgent
 from myscrapy.webscrapy.items import WebscrapyItem
 
 
 class TInfo(scrapy.Spider):
     name = "TInfo"
-    allowed_domains = ["http://cs.hitsz.edu.cn/"]
+    allowed_domains = ["hitsz.edu.cn"]
     url_stop_words = []
     start_urls = [
         'http://cs.hitsz.edu.cn/szll/qzjs.htm'
@@ -18,9 +16,21 @@ class TInfo(scrapy.Spider):
         item = WebscrapyItem()
         teacherlist = response.xpath('//div[@class="teacher-content"]/ul/li')
         for teacher in teacherlist:
+            item['Name'] = teacher.xpath('div[@class="teacher-left"]/p[@class="teacher-name"]/text()').extract_first()
             item['Title'] = teacher.xpath('div[@class="teacher-box"]/dl[1]/dd/text()').extract_first()
+            item['Phone'] = teacher.xpath('div[@class="teacher-box"]/dl[2]/dd/text()').extract_first()
+            item['Fax'] = teacher.xpath('div[@class="teacher-box"]/dl[3]/dd/text()').extract_first()
+            item['Email'] = teacher.xpath('div[@class="teacher-box"]/dl[4]/dd/a/text()').extract_first()
+            item['ResearchDirection'] = teacher.xpath('div[@class="teacher-box"]/dl[5]/dd/text()').extract_first()
             yield item
-        # TODO: add //a/@href into URL list
+
+        url_list = response.xpath("//a/@href").extract()
+        for url in url_list:
+            if url[0:4] != 'qzjs':
+                continue
+            url = 'http://cs.hitsz.edu.cn/szll/' + url
+            print(url)
+            yield scrapy.Request(url=url, callback=self.parse)
 
 
 def runspider():

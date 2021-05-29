@@ -9,10 +9,10 @@ import scrapy
 class WebscrapyItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
+    Name = scrapy.Field()
     Title = scrapy.Field()
     Phone = scrapy.Field()
     Fax = scrapy.Field()
     Email = scrapy.Field()
     ResearchDirection = scrapy.Field()
-    test = scrapy.Field()
     pass

@@ -25,11 +25,19 @@ class WebscrapyPipeline:
 
     def create_table(self):
         self.curr.execute("""DROP TABLE IF EXISTS TINFO""")
-        self.curr.execute("""CREATE TABLE TINFO(TITLE TEXT)""")
+        self.curr.execute("""CREATE TABLE TINFO(
+        Name TEXT,
+        Title TEXT,
+        Phone TEXT,
+        Fax TEXT,
+        Email TEXT,
+        ResearchDirection TEXT
+        )""")
         self.conn.commit()
 
     def process_item(self, item, spider):
-        print(item['Title'])
-        self.curr.execute("""insert into tinfo values (%s)""", (str(item['Title']),))
+        self.curr.execute("""insert into tinfo values (%s,%s,%s,%s,%s,%s)""",
+                          (str(item['Name']), str(item['Title']), str(item['Phone']), str(item['Fax']),
+                           str(item['Email']), str(item['ResearchDirection']),))
         self.conn.commit()
         return item
